@@ -9,10 +9,6 @@ class MyDeadlyBot < RTanque::Bot::Brain
 
     spin_the_radar_in_a_circle
 
-    fire_power = MIN_FIRE_POWER
-    range = MAX_FIRE_POWER - MIN_FIRE_POWER
-    command.fire MIN_FIRE_POWER + rand(range)
-    
     bot = bots_by_distance.first
     return unless bot
 
@@ -27,6 +23,10 @@ class MyDeadlyBot < RTanque::Bot::Brain
     command.heading        = bot.heading + 90
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
+
+    fire_power = MIN_FIRE_POWER
+    if sensors.turret_heading == sensors
+    range = MAX_FIRE_POWER if sensors.turret_heading == bot.heading
   end
 
   def bots_by_distance
