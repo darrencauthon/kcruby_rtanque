@@ -3,12 +3,9 @@ class MyDeadlyBot < RTanque::Bot::Brain
   include RTanque::Bot::BrainHelper
 
   def tick!
-    @degree ||= 0
-    @degree += 1
-    @degree = 0 if @degree > 360
+    spin_the_radar_in_a_circle
 
     command.fire MIN_FIRE_POWER
-    command.radar_heading = RTanque::Heading.new_from_degrees @degree
     
     sensors.radar.each do |scanned_bot|
       command.heading = scanned_bot.heading
@@ -16,5 +13,12 @@ class MyDeadlyBot < RTanque::Bot::Brain
       command.radar_heading = command.heading
       command.turret_heading = command.heading
     end
+  end
+
+  def spin_the_radar_in_a_circle
+    @degree ||= 0
+    @degree += 10
+    @degree = 0 if @degree > 360
+    command.radar_heading = RTanque::Heading.new_from_degrees @degree
   end
 end
