@@ -3,6 +3,8 @@ class MyDeadlyBot < RTanque::Bot::Brain
   include RTanque::Bot::BrainHelper
 
   def tick!
+    @start_time ||= Time.now
+
     spin_the_radar_in_a_circle
 
     fire_power = MIN_FIRE_POWER
@@ -12,13 +14,15 @@ class MyDeadlyBot < RTanque::Bot::Brain
     bot = bots_by_distance.first
     return unless bot
 
-    if bot.distance < 300
-      command.speed = 0
-    else
+    diff = (Time.now - @start_time)
+    puts [diff, diff/10, (diff/10) % 1].inspect
+    if (diff / 10) % 2 <= 1
       command.speed = MAX_BOT_SPEED
+    else
+      command.speed = -MAX_BOT_SPEED
     end
 
-    command.heading        = bot.heading
+    command.heading        = bot.heading + 90
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
   end
