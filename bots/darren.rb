@@ -24,7 +24,10 @@ class Darren < RTanque::Bot::Brain
 
     def self.execute bot
       setup(bot) unless @strategies
-      @strategies.each { |x| x.turn }
+      @strategies.select { |x| x.is_applicable? }.each do |s| 
+        s.setup_default_values
+        s.turn
+      end
     end
 
     def command
@@ -34,18 +37,44 @@ class Darren < RTanque::Bot::Brain
     def sensors
       @bot.sensors
     end
+
+    def bots
+      sensors.radar.sort_by { |x| x.distance }
+    end
+
+    def setup_default_values
+      @direction  ||= :forward
+      @hit_a_wall ||= false
+      @start_time ||= Time.now
+    end
   end
 
-  class DefaultStrategy < Strategy
+  class ICantSeeAnybody < Strategy
+    def is_applicable?
+      bots.count == 0
+    end
+
     def turn
-      set_default_values
-
       command.fire_power = MIN_FIRE_POWER
-
       spin_the_radar_in_a_circle
+    end
 
-      bot = bots_by_distance.first
-      return unless bot
+    def spin_the_radar_in_a_circle
+      @degree ||= 0
+      @degree += 5
+      @degree = 0 if @degree > 360
+      command.radar_heading = RTanque::Heading.new_from_degrees @degree
+    end
+  end
+
+  class ISeeSomethingToShoot < Strategy
+
+    def is_applicable?
+      bots.count > 0
+    end
+
+    def turn
+      bot = bots.first
 
       if @hit_a_wall == false && sensors.position.on_wall?
         @direction = (@direction != :forward) ? :forward : :backward
@@ -73,22 +102,6 @@ class Darren < RTanque::Bot::Brain
       one == two
     end
 
-    def bots_by_distance
-      sensors.radar.sort_by { |x| x.distance }
-    end
-
-    def spin_the_radar_in_a_circle
-      @degree ||= 0
-      @degree += 5
-      @degree = 0 if @degree > 360
-      command.radar_heading = RTanque::Heading.new_from_degrees @degree
-    end
-
-    def set_default_values
-      @direction  ||= :forward
-      @hit_a_wall ||= false
-      @start_time ||= Time.now
-    end
   end
 
   def tick!
