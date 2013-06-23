@@ -103,7 +103,7 @@ class ISeeSomethingToShoot < Darren::Strategy
     speed = MAX_BOT_SPEED
     command.speed = @direction == :forward ? speed : -1 * speed
 
-    command.heading        = bot.heading + 95
+    command.heading        = bot.heading + 115
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
 
@@ -121,4 +121,3 @@ class ISeeSomethingToShoot < Darren::Strategy
   end
 
 end
-
