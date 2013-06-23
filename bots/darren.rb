@@ -22,11 +22,21 @@ class Darren < RTanque::Bot::Brain
       @strategies = @types.map { |t| t.new bot }
     end
 
+    def apply
+    end
+
+    def do_not_apply
+    end
+
     def self.execute bot
       setup(bot) unless @strategies
       @strategies.select { |x| x.is_applicable? }.each do |s| 
         s.setup_default_values
-        s.turn
+        if s.is_applicable?
+          s.apply
+        else
+          s.do_not_apply
+        end
       end
     end
 
@@ -61,7 +71,7 @@ class ICantSeeAnybody < Darren::Strategy
     bots.count == 0
   end
 
-  def turn
+  def apply
     command.fire_power = MIN_FIRE_POWER
     spin_the_radar_in_a_circle
   end
@@ -81,7 +91,7 @@ class ISeeSomethingToShoot < Darren::Strategy
     bots.count > 0
   end
 
-  def turn
+  def apply
     bot = bots.first
 
     if @hit_a_wall == false && sensors.position.on_wall?
