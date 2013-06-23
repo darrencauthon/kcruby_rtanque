@@ -1,5 +1,5 @@
-class MyDeadlyBot < RTanque::Bot::Brain
-  NAME = 'darren'
+class Darren < RTanque::Bot::Brain
+  NAME = 'Darren'
   include RTanque::Bot::BrainHelper
 
   def tick!
