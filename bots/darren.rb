@@ -54,6 +54,8 @@ class Darren < RTanque::Bot::Brain
   end
 end
 
+# logic starts here
+
 class ICantSeeAnybody < Darren::Strategy
   def is_applicable?
     bots.count == 0
@@ -66,9 +68,10 @@ class ICantSeeAnybody < Darren::Strategy
 
   def spin_the_radar_in_a_circle
     @degree ||= 0
-    @degree += 5
+    @degree += 3
     @degree = 0 if @degree > 360
-    command.radar_heading = RTanque::Heading.new_from_degrees @degree
+    command.radar_heading  = RTanque::Heading.new_from_degrees @degree
+    command.turret_heading = command.radar_heading
   end
 end
 
