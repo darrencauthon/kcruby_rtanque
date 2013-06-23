@@ -8,6 +8,7 @@ class MyDeadlyBot < RTanque::Bot::Brain
     command.fire MIN_FIRE_POWER
     
     sensors.radar.each do |scanned_bot|
+      puts scanned_bot.inspect
       command.heading = scanned_bot.heading
       command.speed = 3
       command.radar_heading = command.heading
