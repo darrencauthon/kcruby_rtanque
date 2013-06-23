@@ -18,15 +18,22 @@ class MyDeadlyBot < RTanque::Bot::Brain
     end
     @hit_a_wall = false unless sensors.position.on_wall?
 
-    command.speed = @direction == :forward ? MAX_BOT_SPEED : -MAX_BOT_SPEED
+    speed = MAX_BOT_SPEED
+    command.speed = @direction == :forward ? speed : -1 * speed
 
     command.heading        = bot.heading + 90
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
 
     fire_power = MIN_FIRE_POWER
-    if sensors.turret_heading == sensors
-    range = MAX_FIRE_POWER if sensors.turret_heading == bot.heading
+    fire_power = MAX_FIRE_POWER if headings_are_the_same sensors.turret_heading, bot.heading
+    command.fire fire_power
+  end
+
+  def headings_are_the_same one, two
+    one = (one.to_degrees * 2).to_i
+    two = (two.to_degrees * 2).to_i
+    one == two
   end
 
   def bots_by_distance
