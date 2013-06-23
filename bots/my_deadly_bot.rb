@@ -7,6 +7,8 @@ class MyDeadlyBot < RTanque::Bot::Brain
     @hit_a_wall ||= false
     @start_time ||= Time.now
 
+    command.fire_power = MIN_FIRE_POWER
+
     spin_the_radar_in_a_circle
 
     bot = bots_by_distance.first
