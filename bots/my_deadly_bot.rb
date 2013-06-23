@@ -21,18 +21,20 @@ class MyDeadlyBot < RTanque::Bot::Brain
     speed = MAX_BOT_SPEED
     command.speed = @direction == :forward ? speed : -1 * speed
 
-    command.heading        = bot.heading + 90
+    command.heading        = bot.heading + 95
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
 
     fire_power = MIN_FIRE_POWER
-    fire_power = MAX_FIRE_POWER if headings_are_the_same sensors.turret_heading, bot.heading
+    if headings_are_the_same sensors.turret_heading, bot.heading
+      fire_power = MAX_FIRE_POWER 
+    end
     command.fire fire_power
   end
 
   def headings_are_the_same one, two
-    one = (one.to_degrees * 2).to_i
-    two = (two.to_degrees * 2).to_i
+    one = (one.to_degrees * 5).to_i
+    two = (two.to_degrees * 5).to_i
     one == two
   end
 
