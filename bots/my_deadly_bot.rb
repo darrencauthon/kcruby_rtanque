@@ -3,6 +3,8 @@ class MyDeadlyBot < RTanque::Bot::Brain
   include RTanque::Bot::BrainHelper
 
   def tick!
+    @direction  ||= :forward
+    @hit_a_wall ||= false
     @start_time ||= Time.now
 
     spin_the_radar_in_a_circle
@@ -14,13 +16,13 @@ class MyDeadlyBot < RTanque::Bot::Brain
     bot = bots_by_distance.first
     return unless bot
 
-    diff = (Time.now - @start_time)
-    puts [diff, diff/10, (diff/10) % 1].inspect
-    if (diff / 10) % 2 <= 1
-      command.speed = MAX_BOT_SPEED
-    else
-      command.speed = -MAX_BOT_SPEED
+    if @hit_a_wall == false && sensors.position.on_wall?
+      @direction = (@direction != :forward) ? :forward : :backward
+      @hit_a_wall = true
     end
+    @hit_a_wall = false unless sensors.position.on_wall?
+
+    command.speed = @direction == :forward ? MAX_BOT_SPEED : -MAX_BOT_SPEED
 
     command.heading        = bot.heading + 90
     command.radar_heading  = bot.heading
