@@ -3,9 +3,7 @@ class MyDeadlyBot < RTanque::Bot::Brain
   include RTanque::Bot::BrainHelper
 
   def tick!
-    @direction  ||= :forward
-    @hit_a_wall ||= false
-    @start_time ||= Time.now
+    set_default_values
 
     command.fire_power = MIN_FIRE_POWER
 
@@ -39,7 +37,7 @@ class MyDeadlyBot < RTanque::Bot::Brain
   end
 
   def bots_by_distance
-    sensors.radar.sort { |x| x.distance }
+    sensors.radar.sort_by { |x| x.distance }
   end
 
   def spin_the_radar_in_a_circle
@@ -47,5 +45,11 @@ class MyDeadlyBot < RTanque::Bot::Brain
     @degree += 5
     @degree = 0 if @degree > 360
     command.radar_heading = RTanque::Heading.new_from_degrees @degree
+  end
+
+  def set_default_values
+    @direction  ||= :forward
+    @hit_a_wall ||= false
+    @start_time ||= Time.now
   end
 end
