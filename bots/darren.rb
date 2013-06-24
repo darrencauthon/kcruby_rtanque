@@ -24,6 +24,9 @@ class Darren < RTanque::Bot::Brain
       @strategies = @types.map { |t| t.new bot }
     end
 
+    def is_applicable?
+    end
+
     def apply
     end
 
