@@ -138,10 +138,9 @@ class ISeeSomethingToShoot < Darren::Strategy
   end
 
   def fire_power_against bot
-    if headings_are_the_same sensors.turret_heading, bot.heading
-      return MAX_FIRE_POWER 
-    end
-    MIN_FIRE_POWER
+    headings_are_the_same(sensors.turret_heading, bot.heading) ?
+      MAX_FIRE_POWER :
+      MIN_FIRE_POWER
   end
 
 end
