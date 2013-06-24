@@ -108,6 +108,12 @@ module CircleStrafing
   end
 end
 
+class AlwaysFireSomething < Darren::Strategy
+  def apply
+    command.fire_power = MIN_FIRE_POWER
+  end
+end
+
 class SuddenReversalIfWallIsHit < Darren::Strategy
   def is_applicable?
     true
@@ -131,7 +137,6 @@ class ICantSeeAnybody < Darren::Strategy
   end
 
   def apply
-    command.fire_power = MIN_FIRE_POWER
     spin_the_radar_in_a_circle
   end
 
