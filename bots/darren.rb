@@ -93,7 +93,14 @@ class ICantSeeAnybody < Darren::Strategy
   def apply
     command.fire_power = MIN_FIRE_POWER
     spin_the_radar_in_a_circle
-    command.speed = 1
+    command.speed = speed
+  end
+
+  def speed
+    if hit_a_wall
+      @direction = (@direction != :forward) ? :forward : :backward 
+    end
+    @direction == :forward ? MAX_BOT_SPEED : -1 * MAX_BOT_SPEED
   end
 
   def spin_the_radar_in_a_circle
