@@ -88,7 +88,7 @@ end
 
 # logic starts here
 
-module CircleStrafing
+module Darren::CircleStrafing
 
   MIN_FIRE_POWER = 1
   MAX_FIRE_POWER = 3
@@ -108,13 +108,13 @@ module CircleStrafing
   end
 end
 
-class AlwaysFireSomething < Darren::Strategy
+class Darren::AlwaysFireSomething < Darren::Strategy
   def apply
     command.fire_power = MIN_FIRE_POWER
   end
 end
 
-class SuddenReversalIfWallIsHit < Darren::Strategy
+class Darren::SuddenReversalIfWallIsHit < Darren::Strategy
   def is_applicable?
     true
   end
@@ -131,7 +131,7 @@ class SuddenReversalIfWallIsHit < Darren::Strategy
   end
 end
 
-class ICantSeeAnybody < Darren::Strategy
+class Darren::ICantSeeAnybody < Darren::Strategy
   def is_applicable?
     bots.count == 0
   end
@@ -149,8 +149,8 @@ class ICantSeeAnybody < Darren::Strategy
   end
 end
 
-class ISeeSomethingToShoot < Darren::Strategy
-  include CircleStrafing
+class Darren::ISeeSomethingToShoot < Darren::Strategy
+  include Darren::CircleStrafing
 
   def is_applicable?
     bots.count > 0
