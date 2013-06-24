@@ -8,6 +8,8 @@ class Darren < RTanque::Bot::Brain
     MAX_FIRE_POWER = 3
     MAX_BOT_SPEED  = 100
 
+    attr_accessor :hit_a_wall
+
     def initialize bot
       @bot = bot
     end
@@ -54,8 +56,19 @@ class Darren < RTanque::Bot::Brain
 
     def setup_default_values
       @direction  ||= :forward
-      @hit_a_wall ||= false
       @start_time ||= Time.now
+      determine_if_a_wall_was_just_hit
+    end
+
+    def determine_if_a_wall_was_just_hit
+      @hit_a_wall == false
+      if sensors.position.on_wall?
+        @hit_a_wall = !@still_touching_a_wall
+        @still_touching_a_wall = true
+      else
+        @hit_a_wall = false
+        @still_touching_a_wall = false
+      end
     end
   end
 
@@ -95,11 +108,7 @@ class ISeeSomethingToShoot < Darren::Strategy
   def apply
     bot = bots.first
 
-    if @hit_a_wall == false && sensors.position.on_wall?
-      @direction = (@direction != :forward) ? :forward : :backward
-      @hit_a_wall = true
-    end
-    @hit_a_wall = false unless sensors.position.on_wall?
+    @direction = (@direction != :forward) ? :forward : :backward if hit_a_wall
 
     speed = MAX_BOT_SPEED
     command.speed = @direction == :forward ? speed : -1 * speed
