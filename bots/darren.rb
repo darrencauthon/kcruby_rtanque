@@ -85,14 +85,12 @@ end
 
 # logic starts here
 
-class ICantSeeAnybody < Darren::Strategy
+class SuddenReversalIfWallIsHit < Darren::Strategy
   def is_applicable?
-    bots.count == 0
+    true
   end
 
   def apply
-    command.fire_power = MIN_FIRE_POWER
-    spin_the_radar_in_a_circle
     command.speed = speed
   end
 
@@ -101,6 +99,17 @@ class ICantSeeAnybody < Darren::Strategy
       @direction = (@direction != :forward) ? :forward : :backward 
     end
     @direction == :forward ? MAX_BOT_SPEED : -1 * MAX_BOT_SPEED
+  end
+end
+
+class ICantSeeAnybody < Darren::Strategy
+  def is_applicable?
+    bots.count == 0
+  end
+
+  def apply
+    command.fire_power = MIN_FIRE_POWER
+    spin_the_radar_in_a_circle
   end
 
   def spin_the_radar_in_a_circle
@@ -121,19 +130,11 @@ class ISeeSomethingToShoot < Darren::Strategy
   def apply
     bot = bots.first
 
-    command.speed          = speed
     command.heading        = bot.heading + 115
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
 
     command.fire fire_power_against(bot)
-  end
-
-  def speed
-    if hit_a_wall
-      @direction = (@direction != :forward) ? :forward : :backward 
-    end
-    @direction == :forward ? MAX_BOT_SPEED : -1 * MAX_BOT_SPEED
   end
 
   def fire_power_against bot
