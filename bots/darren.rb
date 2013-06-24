@@ -8,7 +8,7 @@ class Darren < RTanque::Bot::Brain
     MAX_FIRE_POWER = 3
     MAX_BOT_SPEED  = 100
 
-    attr_accessor :hit_a_wall
+    attr_reader :hit_a_wall
 
     def initialize bot
       @bot = bot
@@ -19,7 +19,7 @@ class Darren < RTanque::Bot::Brain
       @types << c
     end
 
-    def self.setup(bot)
+    def self.load_strategies_for bot
       return if @strategies
       @strategies = @types.map { |t| t.new bot }
     end
@@ -31,8 +31,8 @@ class Darren < RTanque::Bot::Brain
     end
 
     def self.execute bot
-      setup(bot) unless @strategies
-      @strategies.select { |x| x.is_applicable? }.each do |s| 
+      load_strategies_for bot
+      @strategies.each do |s| 
         s.setup_default_values
         if s.is_applicable?
           s.apply
@@ -69,6 +69,12 @@ class Darren < RTanque::Bot::Brain
         @hit_a_wall = false
         @still_touching_a_wall = false
       end
+    end
+
+    def headings_are_the_same one, two
+      one = (one.to_degrees * 5).to_i
+      two = (two.to_degrees * 5).to_i
+      one == two
     end
   end
 
@@ -108,26 +114,26 @@ class ISeeSomethingToShoot < Darren::Strategy
   def apply
     bot = bots.first
 
-    @direction = (@direction != :forward) ? :forward : :backward if hit_a_wall
-
-    speed = MAX_BOT_SPEED
-    command.speed = @direction == :forward ? speed : -1 * speed
-
+    command.speed          = speed
     command.heading        = bot.heading + 115
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
 
-    fire_power = MIN_FIRE_POWER
-    if headings_are_the_same sensors.turret_heading, bot.heading
-      fire_power = MAX_FIRE_POWER 
-    end
-    command.fire fire_power
+    command.fire fire_power_against(bot)
   end
 
-  def headings_are_the_same one, two
-    one = (one.to_degrees * 5).to_i
-    two = (two.to_degrees * 5).to_i
-    one == two
+  def speed
+    if hit_a_wall
+      @direction = (@direction != :forward) ? :forward : :backward 
+    end
+    @direction == :forward ? MAX_BOT_SPEED : -1 * MAX_BOT_SPEED
+  end
+
+  def fire_power_against bot
+    if headings_are_the_same sensors.turret_heading, bot.heading
+      return MAX_FIRE_POWER 
+    end
+    MIN_FIRE_POWER
   end
 
 end
