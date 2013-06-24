@@ -109,6 +109,10 @@ module Darren::CircleStrafing
 end
 
 class Darren::AlwaysFireSomething < Darren::Strategy
+  def is_applicable?
+    true
+  end
+
   def apply
     command.fire_power = MIN_FIRE_POWER
   end
