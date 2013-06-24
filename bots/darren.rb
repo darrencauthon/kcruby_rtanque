@@ -88,6 +88,26 @@ end
 
 # logic starts here
 
+module CircleStrafing
+
+  MIN_FIRE_POWER = 1
+  MAX_FIRE_POWER = 3
+
+  def apply
+    command.heading        = bot.heading + 115
+    command.radar_heading  = bot.heading
+    command.turret_heading = bot.heading
+
+    command.fire fire_power_against(bot)
+  end
+
+  def fire_power_against bot
+    headings_are_the_same(sensors.turret_heading, bot.heading) ?
+      MAX_FIRE_POWER :
+      MIN_FIRE_POWER
+  end
+end
+
 class SuddenReversalIfWallIsHit < Darren::Strategy
   def is_applicable?
     true
@@ -125,25 +145,13 @@ class ICantSeeAnybody < Darren::Strategy
 end
 
 class ISeeSomethingToShoot < Darren::Strategy
+  include CircleStrafing
 
   def is_applicable?
     bots.count > 0
   end
 
-  def apply
+  def bot
     bot = bots.first
-
-    command.heading        = bot.heading + 115
-    command.radar_heading  = bot.heading
-    command.turret_heading = bot.heading
-
-    command.fire fire_power_against(bot)
   end
-
-  def fire_power_against bot
-    headings_are_the_same(sensors.turret_heading, bot.heading) ?
-      MAX_FIRE_POWER :
-      MIN_FIRE_POWER
-  end
-
 end
