@@ -83,6 +83,7 @@ class Darren < RTanque::Bot::Brain
 
   def tick!
     Darren::Strategy.execute self
+  rescue
   end
 end
 
