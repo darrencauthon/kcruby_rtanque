@@ -19,11 +19,6 @@ class Darren < RTanque::Bot::Brain
       @types << c
     end
 
-    def self.load_strategies_for bot
-      return if @strategies
-      @strategies = @types.map { |t| t.new bot }
-    end
-
     def is_applicable?
     end
 
@@ -34,14 +29,21 @@ class Darren < RTanque::Bot::Brain
     end
 
     def self.execute bot
-      load_strategies_for bot
-      @strategies.each do |s| 
-        s.setup_default_values
-        if s.is_applicable?
-          s.apply
-        else
-          s.do_not_apply
-        end
+      make_sure_strategies_have_been_loaded_for bot
+      @strategies.each { |s| run_strategy s }
+    end
+
+    def self.make_sure_strategies_have_been_loaded_for bot
+      return if @strategies
+      @strategies = @types.map { |t| t.new bot }
+    end
+
+    def self.run_strategy strategy
+      strategy.setup_default_values
+      if strategy.is_applicable?
+        strategy.apply
+      else
+        strategy.do_not_apply
       end
     end
 
