@@ -117,14 +117,6 @@ module Darren::CircleStrafing
     command.heading        = bot.heading + 115
     command.radar_heading  = bot.heading
     command.turret_heading = bot.heading
-
-    command.fire fire_power_against(bot)
-  end
-
-  def fire_power_against bot
-    headings_are_the_same(sensors.turret_heading, bot.heading) ?
-      MAX_FIRE_POWER :
-      MIN_FIRE_POWER
   end
 end
 
