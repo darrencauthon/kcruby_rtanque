@@ -104,8 +104,7 @@ module Darren::CircleStrafing
   end
 
   def fire_power_against bot
-    headings_are_the_same(sensors.turret_heading, bot.heading) &&
-    bot.distance <= 300 ?
+    headings_are_the_same(sensors.turret_heading, bot.heading) ?
       MAX_FIRE_POWER :
       MIN_FIRE_POWER
   end
