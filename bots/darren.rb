@@ -14,6 +14,7 @@ class Darren < RTanque::Bot::Brain
 
     def initialize bot
       @bot = bot
+      @echoes = []
     end
 
     def self.inherited c
@@ -56,13 +57,22 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
-      sensors.radar.sort_by { |x| x.distance }
+      current_bots = sensors.radar.sort_by { |x| x.distance }
+      return current_bots if current_bots.count > 0
+      @echoes ||= []
     end
 
     def setup_default_values
       @direction  ||= :forward
       @start_time ||= Time.now
       determine_if_a_wall_was_just_hit
+      supplement_the_radar_with_echos_of_bots_past
+    end
+
+    def supplement_the_radar_with_echos_of_bots_past
+      @echoes ||= []
+      @echoes << sensors
+      @echoes = @echoes.select { |x| x.ticks >= sensors.ticks - 5 }
     end
 
     def determine_if_a_wall_was_just_hit
