@@ -108,18 +108,6 @@ end
 
 # logic starts here
 
-module Darren::CircleStrafing
-
-  MIN_FIRE_POWER = 1
-  MAX_FIRE_POWER = 3
-
-  def apply
-    command.heading        = bot.heading + 115
-    command.radar_heading  = bot.heading
-    command.turret_heading = bot.heading
-  end
-end
-
 class Darren::AlwaysFireSomething < Darren::Strategy
   def is_applicable?
     true
@@ -166,13 +154,14 @@ class Darren::ICantSeeAnybody < Darren::Strategy
 end
 
 class Darren::ISeeSomethingToShoot < Darren::Strategy
-  include Darren::CircleStrafing
+  def apply
+    bot = bots.first
+    command.heading        = bot.heading + 115
+    command.radar_heading  = bot.heading
+    command.turret_heading = bot.heading
+  end
 
   def is_applicable?
     bots.count > 0
-  end
-
-  def bot
-    bot = bots.first
   end
 end
