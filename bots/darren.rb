@@ -75,9 +75,9 @@ class Darren < RTanque::Bot::Brain
 
     def supplement_the_radar_with_echos_of_bots_past
       @echoes ||= {}
-      puts '***'
-      puts sensors.radar.first
-      puts '***'
+      #puts '***'
+      #puts sensors.radar.first
+      #puts '***'
       @echoes[sensors.ticks] = sensors.radar.to_a
       keys = @echoes.keys.select { |k| k + 10 <= sensors.ticks }
       keys.each { |k| @echoes.delete k }
