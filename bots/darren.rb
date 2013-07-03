@@ -59,7 +59,7 @@ class Darren < RTanque::Bot::Brain
     def bots
       current_bots = sensors.radar.sort_by { |x| x.distance }
       return current_bots if current_bots.count > 0
-      @echoes[sensors.ticks - 1] ? @echoes[sensors.ticks - 1].radar.sort_by { |x| x.distance } : []
+      @echoes.map { |_, v| v }.flatten
     end
 
     def setup_default_values
@@ -72,7 +72,7 @@ class Darren < RTanque::Bot::Brain
     def supplement_the_radar_with_echos_of_bots_past
       @echoes ||= {}
       @echoes[sensors.ticks] = sensors
-      keys = @echoes.keys.select { |k| k + 5 <= sensors.ticks }
+      keys = @echoes.keys.select { |k| k + 10 <= sensors.ticks }
       keys.each { |k| @echoes.delete k }
     end
 
