@@ -76,7 +76,6 @@ class Darren < RTanque::Bot::Brain
     def supplement_the_radar_with_echos_of_bots_past
       @echoes ||= {}
       puts '***'
-      raise sensors.radar.inspect if sensors.radar.first
       puts sensors.radar.first
       puts '***'
       @echoes[sensors.ticks] = sensors.radar.to_a
