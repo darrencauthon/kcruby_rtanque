@@ -2,6 +2,8 @@ class Darren < RTanque::Bot::Brain
   NAME = 'Darren'
   include RTanque::Bot::BrainHelper
 
+  attr_accessor :strategies
+
   class Strategy
 
     MIN_FIRE_POWER = 1
@@ -20,8 +22,8 @@ class Darren < RTanque::Bot::Brain
     end
 
     def self.load_strategies_for bot
-      return if @strategies
-      @strategies = @types.map { |t| t.new bot }
+      return if bot.strategies
+      bot.strategies = @types.map { |t| t.new bot }
     end
 
     def is_applicable?
@@ -35,7 +37,7 @@ class Darren < RTanque::Bot::Brain
 
     def self.execute bot
       load_strategies_for bot
-      @strategies.each do |s| 
+      bot.strategies.each do |s| 
         s.setup_default_values
         if s.is_applicable?
           s.apply
@@ -83,7 +85,6 @@ class Darren < RTanque::Bot::Brain
 
   def tick!
     Darren::Strategy.execute self
-  rescue
   end
 end
 
