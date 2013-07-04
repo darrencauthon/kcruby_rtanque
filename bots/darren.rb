@@ -4,6 +4,10 @@ class Darren < RTanque::Bot::Brain
 
   attr_accessor :strategies
 
+  class Point
+    attr_accessor :name, :x, :y
+  end
+
   class Strategy
 
     MIN_FIRE_POWER = 1
@@ -93,7 +97,7 @@ puts '---'
           radians = reflection.heading.to_f
           x = Math.sin(radians) * distance
           puts [y, x].inspect
-          puts [x+ @points[sensors.ticks].x, y+ @points[sensors.ticks].y].inspect
+          puts [x+ sensors.position.x, y+ sensors.position.y].inspect
         rescue
         end
       end
