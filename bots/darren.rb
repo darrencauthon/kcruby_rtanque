@@ -15,6 +15,7 @@ class Darren < RTanque::Bot::Brain
     def initialize bot
       @bot = bot
       @echoes = {}
+      @points = {}
     end
 
     def self.inherited c
@@ -57,6 +58,18 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
+puts '---'
+#degr := arctand ((y2 - y1) / (x2 - x1))
+first = @echoes.keys.first
+last = @echoes.keys.last
+if @echoes[first] && @echoes[last]
+  puts @echoes[first]
+  puts @points[first]
+  puts ','
+  puts @echoes[last]
+  puts @points[last]
+end
+puts '---'
       current_bots = sensors.radar.sort_by { |x| x.distance }
       return current_bots if current_bots.count > 0
       []
@@ -70,6 +83,9 @@ class Darren < RTanque::Bot::Brain
     end
 
     def supplement_the_radar_with_echos_of_bots_past
+      @points ||= {}
+      @points[sensors.ticks] = sensors.position
+
       @echoes ||= {}
       @echoes[sensors.ticks] = sensors.radar.to_a
       keys = @echoes.keys.select { |k| k + 10 <= sensors.ticks }
