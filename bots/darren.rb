@@ -63,11 +63,17 @@ puts '---'
 first = @echoes.keys.first
 last = @echoes.keys.last
 if @echoes[first] && @echoes[last]
-  puts @echoes[first]
-  puts @points[first]
-  puts ','
-  puts @echoes[last]
-  puts @points[last]
+  begin
+    distance = @echoes[first].first.distance
+    radians = @echoes[first].first.heading.to_f
+    y = Math.cos(radians) * distance
+    distance = @echoes[first].first.distance
+    radians = @echoes[first].first.heading.to_f
+    x = Math.sin(radians) * distance
+    puts [y, x].inspect
+    puts [x+ @points[first].x, y+ @points[first].y].inspect
+  rescue
+  end
 end
 puts '---'
       current_bots = sensors.radar.sort_by { |x| x.distance }
