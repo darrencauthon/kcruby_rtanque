@@ -82,17 +82,20 @@ class Darren < RTanque::Bot::Brain
       shell_speed_factor = RTanque::Configuration.shell.speed_factor
       bot.next_points.each_with_index.map do |point, tick|
         heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
-        #puts '---'
-        #puts [sensors.position, RTanque::Point.new(point[:x], point[:y])]
-        #puts '---'
         { fire_rate: 3, point: point, heading: heading }
       end
     end
 
     def calculate_next_points_for bot
-      (200..210).to_a.map do |tick|
-        x=(bot.x+(Math.sin(bot.heading)*bot.speed * tick)).round(10)
-        y=(bot.y+(Math.cos(bot.heading)*bot.speed * tick)).round(10)
+      this_point = bot.previous_points[-1]
+      last_point = bot.previous_points[-2]
+      return [] unless this_point and last_point
+      heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
+                                                    RTanque::Point.new(this_point[:x], this_point[:y]))
+
+      (50..100).to_a.map do |tick|
+        x=(bot.x+(Math.sin(heading)*bot.speed * tick)).round(10)
+        y=(bot.y+(Math.cos(heading)*bot.speed * tick)).round(10)
         x = 0 if x <= 0
         x = arena.width if x >= arena.width
         y = 0 if y <= 0
@@ -290,15 +293,28 @@ end
 class Darren::TryToGuessWhereTheBotWillBe < Darren::Strategy
   def apply
     bot = bots.first
-    puts '---'
-    puts [[bot.x, bot.y], bot.firing_solutions.last[:point]].inspect
-    puts '---'
-    command.turret_heading = bot.firing_solutions.first[:heading]
+    #puts [[bot.x, bot.y], bot.firing_solutions.last[:point]].inspect
+    point = bot.firing_solutions.last[:point]
+    command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+    #puts bot.heading.to_degrees.inspect
+    #puts "#{command.turret_heading.to_degrees.inspect} (#{point[:x]} #{point[:y]})"
     #puts "GET IT! #{bot.firing_solutions.last.inspect}"
   end
 
   def is_applicable?
     b = bots
     b.count > 0 && b.first.firing_solutions.count > 0
+  end
+end
+
+class Darren::StickToTheSide < Darren::Strategy
+  def is_applicable?
+    true
+  end
+  def apply
+    command.speed = 0
+    command.fire 0
+
+    #puts command.heading.inspect
   end
 end
