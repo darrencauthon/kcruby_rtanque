@@ -80,10 +80,17 @@ class Darren < RTanque::Bot::Brain
 
     def calculate_firing_solutions_for bot
       shell_speed_factor = RTanque::Configuration.shell.speed_factor
+      firing_solutions = []
       bot.next_points.each_with_index.map do |point, tick|
-        heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
-        { fire_rate: 3, point: point, heading: heading }
+        firing_rate = 3
+        expected_tick = bot.distance / (shell_speed_factor * firing_rate)
+        expected_tick = expected_tick.round
+        if tick == expected_tick
+          heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+          firing_solutions << { match: 0, fire_rate: 3, point: point, heading: heading }
+        end
       end
+      firing_solutions
     end
 
     def calculate_next_points_for bot
@@ -92,7 +99,7 @@ class Darren < RTanque::Bot::Brain
       return [] unless this_point and last_point
       bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
                                                         RTanque::Point.new(this_point[:x], this_point[:y]))
-      (1..50).to_a.map do |tick|
+      (1..75).to_a.map do |tick|
         x=(bot.x+(Math.sin(bot_heading)*bot.speed * tick)).round(10)
         y=(bot.y+(Math.cos(bot_heading)*bot.speed * tick)).round(10)
         x = 0 if x <= 0
