@@ -65,6 +65,7 @@ class Darren < RTanque::Bot::Brain
       sensors.radar.sort_by { |x| x.distance }.map do |x| 
         bot = create_internal_copy_of x
         bot.previous_points = @other_bot_points[bot.name].map { |k, v| v }
+        bot.next_points     = []
         bot.speed = get_speed_of bot
         puts bot.speed
         bot
@@ -98,6 +99,14 @@ class Darren < RTanque::Bot::Brain
 
         def previous_points= points
           @previous_points = points
+        end
+
+        def next_points
+          @next_points
+        end
+
+        def next_points= points
+          @next_points = points
         end
       end
       bot
