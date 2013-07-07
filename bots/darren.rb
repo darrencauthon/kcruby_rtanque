@@ -4,10 +4,6 @@ class Darren < RTanque::Bot::Brain
 
   attr_accessor :strategies
 
-  class Point
-    attr_accessor :name, :x, :y
-  end
-
   class Strategy
 
     MIN_FIRE_POWER = 1
