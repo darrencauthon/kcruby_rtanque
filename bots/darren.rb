@@ -65,8 +65,15 @@ class Darren < RTanque::Bot::Brain
       current_bots = sensors.radar.sort_by { |x| x.distance }
 
       puts '---'
-      if current_bots.first
-        puts @other_bot_points.inspect
+      current_bots.each do |bot|
+        last_point =         @other_bot_points[bot.name][sensors.ticks]
+        next_to_last_point = @other_bot_points[bot.name][sensors.ticks - 1]
+        if last_point && next_to_last_point
+          diff_in_x = (next_to_last_point[:x] - last_point[:x])
+          diff_in_y = (next_to_last_point[:y] - last_point[:y])
+          speed = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
+          puts speed
+        end
       end
       puts '---'
 
