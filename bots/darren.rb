@@ -69,7 +69,7 @@ class Darren < RTanque::Bot::Brain
         bot.y = bot.previous_points.last[:y]
         bot.speed = get_speed_of bot
         bot.next_points     = calculate_next_points_for bot
-        puts bot.next_points.last.inspect
+        puts arena.inspect
         bot
       end
     end
