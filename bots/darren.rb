@@ -300,7 +300,7 @@ class Darren::ISeeSomethingToShoot < Darren::Strategy
   end
 end
 
-class Darren::TryToGuessWhereTheBotWillBe < Darren::Strategy
+class Darren::UseFiringSolutions < Darren::Strategy
   def apply
     bot = bots.first
     firing_solution = bot.firing_solutions.first
