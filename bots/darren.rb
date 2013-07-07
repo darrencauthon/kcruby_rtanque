@@ -299,7 +299,7 @@ end
 class Darren::TryToGuessWhereTheBotWillBe < Darren::Strategy
   def apply
     bot = bots.first
-    firing_solution = bot.firing_solutions.last
+    firing_solution = bot.firing_solutions.first
     point = firing_solution[:point]
     command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
     command.fire firing_solution[:fire_power]
