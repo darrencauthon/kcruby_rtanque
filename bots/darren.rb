@@ -64,7 +64,6 @@ class Darren < RTanque::Bot::Brain
     def bots
       current_bots = sensors.radar.sort_by { |x| x.distance }.map { |x| x.clone }
 
-      puts '---'
       current_bots.each do |bot|
         last_point =         @other_bot_points[bot.name][sensors.ticks]
         next_to_last_point = @other_bot_points[bot.name][sensors.ticks - 1]
@@ -85,7 +84,6 @@ class Darren < RTanque::Bot::Brain
           puts bot.speed
         end
       end
-      puts '---'
 
       return current_bots
     end
