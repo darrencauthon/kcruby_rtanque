@@ -92,7 +92,7 @@ class Darren < RTanque::Bot::Brain
       return [] unless this_point and last_point
       bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
                                                         RTanque::Point.new(this_point[:x], this_point[:y]))
-      (50..100).to_a.map do |tick|
+      (1..50).to_a.map do |tick|
         x=(bot.x+(Math.sin(bot_heading)*bot.speed * tick)).round(10)
         y=(bot.y+(Math.cos(bot_heading)*bot.speed * tick)).round(10)
         x = 0 if x <= 0
