@@ -18,8 +18,8 @@ class Darren < RTanque::Bot::Brain
 
     def initialize bot
       @bot = bot
-      @echoes = {}
-      @points = {}
+      @other_bot_points = {}
+      @my_points = {}
     end
 
     def self.inherited c
@@ -64,9 +64,9 @@ class Darren < RTanque::Bot::Brain
     def bots
 puts '---'
 #degr := arctand ((y2 - y1) / (x2 - x1))
-first = @echoes.keys.first
-last = @echoes.keys.last
-if @echoes[first] && @echoes[last]
+first = @other_bot_points.keys.first
+last = @other_bot_points.keys.last
+if @other_bot_points[first] && @other_bot_points[last]
 end
 puts '---'
       current_bots = sensors.radar.sort_by { |x| x.distance }
@@ -82,11 +82,11 @@ puts '---'
     end
 
     def supplement_the_radar_with_echos_of_bots_past
-      @points ||= {}
-      @points[sensors.ticks] = sensors.position
+      @my_points ||= {}
+      @my_points[sensors.ticks] = sensors.position
 
-      @echoes ||= {}
-      @echoes[sensors.ticks] = sensors.radar.to_a
+      @other_bot_points ||= {}
+      @other_bot_points[sensors.ticks] = sensors.radar.to_a
 
       sensors.radar.each do |reflection|
         begin
@@ -100,8 +100,8 @@ puts '---'
         end
       end
 
-      keys = @echoes.keys.select { |k| k + 10 <= sensors.ticks }
-      keys.each { |k| @echoes.delete k }
+      keys = @other_bot_points.keys.select { |k| k + 10 <= sensors.ticks }
+      keys.each { |k| @other_bot_points.delete k }
     end
 
     def determine_if_a_wall_was_just_hit
