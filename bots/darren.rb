@@ -57,6 +57,10 @@ class Darren < RTanque::Bot::Brain
       @bot.command
     end
 
+    def arena
+      @bot.arena
+    end
+
     def sensors
       @bot.sensors
     end
@@ -69,7 +73,6 @@ class Darren < RTanque::Bot::Brain
         bot.y = bot.previous_points.last[:y]
         bot.speed = get_speed_of bot
         bot.next_points     = calculate_next_points_for bot
-        puts arena.inspect
         bot
       end
     end
@@ -80,7 +83,9 @@ class Darren < RTanque::Bot::Brain
         x=(bot.x+(Math.sin(bot.heading)*bot.speed * tick)).round(10)
         y=(bot.y+(Math.cos(bot.heading)*bot.speed * tick)).round(10)
         x = 0 if x <= 0
+        x = arena.width if x >= arena.width
         y = 0 if y <= 0
+        y = arena.height if y >= arena.height
         { x: x, y: y }
       end
     end
