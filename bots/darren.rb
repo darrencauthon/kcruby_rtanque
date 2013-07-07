@@ -62,13 +62,13 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
-      sensors.radar.sort_by { |x| x.distance }.map do |x| 
+      sensors.radar.sort_by { |x| x.distance }.map do |bot|
         create_my_own_information_laden_copy_of bot
       end
     end
 
     def create_my_own_information_laden_copy_of bot
-      bot                  = create_clone_with_extra_attributes_of x
+      bot                  = create_clone_with_extra_attributes_of bot
       bot.previous_points  = @other_bot_points[bot.name].map { |k, v| v }
       bot.x                = bot.previous_points.last[:x]
       bot.y                = bot.previous_points.last[:y]
@@ -100,14 +100,18 @@ class Darren < RTanque::Bot::Brain
       bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
                                                         RTanque::Point.new(this_point[:x], this_point[:y]))
       (1..75).to_a.map do |tick|
-        x = (bot.x + (Math.sin(bot_heading) * bot.speed * tick)).round(10)
-        y = (bot.y + (Math.cos(bot_heading) * bot.speed * tick)).round(10)
-        x = 0 if x <= 0
-        x = arena.width if x >= arena.width
-        y = 0 if y <= 0
-        y = arena.height if y >= arena.height
-        { x: x, y: y }
+        guess_where_this_bot_will_be_in_so_many_ticks bot, bot_heading, tick
       end
+    end
+
+    def guess_where_this_bot_will_be_in_so_many_ticks bot, bot_heading, tick
+      x = (bot.x + (Math.sin(bot_heading) * bot.speed * tick)).round(10)
+      y = (bot.y + (Math.cos(bot_heading) * bot.speed * tick)).round(10)
+      x = 0 if x <= 0
+      x = arena.width if x >= arena.width
+      y = 0 if y <= 0
+      y = arena.height if y >= arena.height
+      { x: x, y: y }
     end
 
     def get_speed_of bot
