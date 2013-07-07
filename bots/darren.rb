@@ -90,12 +90,11 @@ class Darren < RTanque::Bot::Brain
       this_point = bot.previous_points[-1]
       last_point = bot.previous_points[-2]
       return [] unless this_point and last_point
-      heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
-                                                    RTanque::Point.new(this_point[:x], this_point[:y]))
-
+      bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
+                                                        RTanque::Point.new(this_point[:x], this_point[:y]))
       (50..100).to_a.map do |tick|
-        x=(bot.x+(Math.sin(heading)*bot.speed * tick)).round(10)
-        y=(bot.y+(Math.cos(heading)*bot.speed * tick)).round(10)
+        x=(bot.x+(Math.sin(bot_heading)*bot.speed * tick)).round(10)
+        y=(bot.y+(Math.cos(bot_heading)*bot.speed * tick)).round(10)
         x = 0 if x <= 0
         x = arena.width if x >= arena.width
         y = 0 if y <= 0
