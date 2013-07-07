@@ -65,18 +65,20 @@ class Darren < RTanque::Bot::Brain
       current_bots = sensors.radar.sort_by { |x| x.distance }.map { |x| create_internal_copy_of x }
 
       current_bots.each do |bot|
-        last_point =         @other_bot_points[bot.name][sensors.ticks]
-        next_to_last_point = @other_bot_points[bot.name][sensors.ticks - 1]
-        if last_point && next_to_last_point
-          diff_in_x = (next_to_last_point[:x] - last_point[:x])
-          diff_in_y = (next_to_last_point[:y] - last_point[:y])
-          speed = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
-          bot.speed = speed
-          puts bot.speed
-        end
+        bot.speed = get_speed_of bot
       end
 
       return current_bots
+    end
+
+    def get_speed_of bot
+      last_point =         @other_bot_points[bot.name][sensors.ticks]
+      next_to_last_point = @other_bot_points[bot.name][sensors.ticks - 1]
+      diff_in_x = (next_to_last_point[:x] - last_point[:x])
+      diff_in_y = (next_to_last_point[:y] - last_point[:y])
+      speed = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
+    rescue
+      0
     end
 
     def create_internal_copy_of bot
