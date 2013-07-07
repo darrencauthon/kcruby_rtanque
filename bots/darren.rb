@@ -178,20 +178,20 @@ class Darren < RTanque::Bot::Brain
       @direction  ||= :forward
       @start_time ||= Time.now
       determine_if_a_wall_was_just_hit
-      supplement_the_radar_with_echos_of_bots_past
+      load_information_necessary_for_important_calculations
     end
 
-    def supplement_the_radar_with_echos_of_bots_past
-      load_up_my_points
-      load_up_the_other_bot_points
+    def load_information_necessary_for_important_calculations
+      record_where_i_have_been
+      record_where_the_other_bots_have_been
     end
 
-    def load_up_my_points
+    def record_where_i_have_been
       @my_points ||= {}
       @my_points[sensors.ticks] = sensors.position
     end
 
-    def load_up_the_other_bot_points
+    def record_where_the_other_bots_have_been
       @other_bot_points ||= {}
       sensors.radar.each do |reflection|
         begin
