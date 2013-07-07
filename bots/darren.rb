@@ -4,6 +4,10 @@ class Darren < RTanque::Bot::Brain
 
   attr_accessor :strategies
 
+  def before_turn
+    strategies.each { |s| s.before_turn }
+  end
+
   class Strategy
 
     MIN_FIRE_POWER = 1
@@ -28,6 +32,14 @@ class Darren < RTanque::Bot::Brain
       bot.strategies = @types.map { |t| t.new bot }
     end
 
+    def self.run_pre_turn_hooks_for bot
+      bot.before_turn
+    end
+
+    def before_turn
+      @bots = nil
+    end
+
     def is_applicable?
     end
 
@@ -39,6 +51,7 @@ class Darren < RTanque::Bot::Brain
 
     def self.execute bot
       load_strategies_for bot
+      run_pre_turn_hooks_for bot
       bot.strategies.each do |s| 
         s.setup_default_values
         if s.is_applicable?
@@ -62,9 +75,9 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
-      sensors.radar.sort_by { |x| x.distance }.map do |bot|
-        create_my_own_information_laden_copy_of bot
-      end
+      @bots ||= sensors.radar.sort_by { |x| x.distance }.map do |bot|
+                  create_my_own_information_laden_copy_of bot
+                end
     end
 
     def create_my_own_information_laden_copy_of bot
