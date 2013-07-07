@@ -62,14 +62,15 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
-puts '---'
-#degr := arctand ((y2 - y1) / (x2 - x1))
-first = @other_bot_points.keys.first
-last = @other_bot_points.keys.last
-if @other_bot_points[first] && @other_bot_points[last]
-end
-puts '---'
-      return sensors.radar.sort_by { |x| x.distance }
+      current_bots = sensors.radar.sort_by { |x| x.distance }
+
+      puts '---'
+      if current_bots.first
+        puts @other_bot_points.inspect
+      end
+      puts '---'
+
+      return current_bots
     end
 
     def setup_default_values
