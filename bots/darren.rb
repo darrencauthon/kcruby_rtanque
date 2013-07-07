@@ -82,12 +82,17 @@ puts '---'
     end
 
     def supplement_the_radar_with_echos_of_bots_past
+      load_up_my_points
+      load_up_the_other_bot_points
+    end
+
+    def load_up_my_points
       @my_points ||= {}
       @my_points[sensors.ticks] = sensors.position
+    end
 
+    def load_up_the_other_bot_points
       @other_bot_points ||= {}
-      #@other_bot_points[sensors.ticks] = sensors.radar.to_a
-
       sensors.radar.each do |reflection|
         begin
           distance = reflection.distance
@@ -106,7 +111,6 @@ puts '---'
           keys.each { |k| @other_bot_points[reflection.name].delete k }
         end
       end
-
     end
 
     def determine_if_a_wall_was_just_hit
