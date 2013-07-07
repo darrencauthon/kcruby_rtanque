@@ -96,8 +96,7 @@ puts '---'
           distance = reflection.distance
           radians = reflection.heading.to_f
           x = Math.sin(radians) * distance
-          puts [x+ sensors.position.x, y+ sensors.position.y].inspect
-        rescue
+          puts [(x + sensors.position.x).round(10), (y + sensors.position.y).round(10)].inspect
         end
       end
 
