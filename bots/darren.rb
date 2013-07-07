@@ -292,28 +292,14 @@ end
 class Darren::TryToGuessWhereTheBotWillBe < Darren::Strategy
   def apply
     bot = bots.first
-    #puts [[bot.x, bot.y], bot.firing_solutions.last[:point]].inspect
-    point = bot.firing_solutions.last[:point]
+    firing_solution = bot.firing_solutions.last
+    point = firing_solution[:point]
     command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
-    #puts bot.heading.to_degrees.inspect
-    #puts "#{command.turret_heading.to_degrees.inspect} (#{point[:x]} #{point[:y]})"
-    #puts "GET IT! #{bot.firing_solutions.last.inspect}"
+    command.fire firing_solution[:fire_rate]
   end
 
   def is_applicable?
     b = bots
     b.count > 0 && b.first.firing_solutions.count > 0
-  end
-end
-
-class Darren::StickToTheSide < Darren::Strategy
-  def is_applicable?
-    true
-  end
-  def apply
-    command.speed = 0
-    command.fire 0
-
-    #puts command.heading.inspect
   end
 end
