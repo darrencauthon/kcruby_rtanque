@@ -86,7 +86,7 @@ puts '---'
       @my_points[sensors.ticks] = sensors.position
 
       @other_bot_points ||= {}
-      @other_bot_points[sensors.ticks] = sensors.radar.to_a
+      #@other_bot_points[sensors.ticks] = sensors.radar.to_a
 
       sensors.radar.each do |reflection|
         begin
@@ -96,12 +96,17 @@ puts '---'
           y = Math.cos(radians) * distance
           x = Math.sin(radians) * distance
 
-          puts [(x + sensors.position.x).round(10), (y + sensors.position.y).round(10)].inspect
+          x = (x + sensors.position.x).round(10)
+          y = (y + sensors.position.y).round(10)
+
+          @other_bot_points[reflection.name] ||= {}
+          @other_bot_points[reflection.name][sensors.ticks] = {x: x, y: y}
+
+          keys = @other_bot_points[reflection.name].keys.select { |k| k + 10 <= sensors.ticks }
+          keys.each { |k| @other_bot_points[reflection.name].delete k }
         end
       end
 
-      keys = @other_bot_points.keys.select { |k| k + 10 <= sensors.ticks }
-      keys.each { |k| @other_bot_points.delete k }
     end
 
     def determine_if_a_wall_was_just_hit
