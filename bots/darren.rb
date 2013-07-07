@@ -314,3 +314,18 @@ class Darren::UseFiringSolutions < Darren::Strategy
     b.count > 0 && b.first.firing_solutions.count > 0
   end
 end
+
+class Darren::ShootBotsThatAreNotMoving < Darren::Strategy
+  def apply
+    command.turret_heading = bots_that_are_not_moving.first.heading
+    command.fire 3
+  end
+
+  def is_applicable?
+    bots_that_are_not_moving.count > 0
+  end
+
+  def bots_that_are_not_moving
+    bots.select { |x| x.speed == 0 }
+  end
+end
