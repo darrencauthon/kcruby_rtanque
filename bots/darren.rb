@@ -63,15 +63,19 @@ class Darren < RTanque::Bot::Brain
 
     def bots
       sensors.radar.sort_by { |x| x.distance }.map do |x| 
-        bot = create_internal_copy_of x
-        bot.previous_points = @other_bot_points[bot.name].map { |k, v| v }
-        bot.x = bot.previous_points.last[:x]
-        bot.y = bot.previous_points.last[:y]
-        bot.speed = get_speed_of bot
-        bot.next_points     = calculate_next_points_for bot
-        bot.firing_solutions = calculate_firing_solutions_for bot
-        bot
+        create_my_own_information_laden_copy_of bot
       end
+    end
+
+    def create_my_own_information_laden_copy_of bot
+      bot                  = create_clone_with_extra_attributes_of x
+      bot.previous_points  = @other_bot_points[bot.name].map { |k, v| v }
+      bot.x                = bot.previous_points.last[:x]
+      bot.y                = bot.previous_points.last[:y]
+      bot.speed            = get_speed_of bot
+      bot.next_points      = calculate_next_points_for bot
+      bot.firing_solutions = calculate_firing_solutions_for bot
+      bot
     end
 
     def calculate_firing_solutions_for bot
@@ -116,7 +120,7 @@ class Darren < RTanque::Bot::Brain
       0
     end
 
-    def create_internal_copy_of bot
+    def create_clone_with_extra_attributes_of bot
       bot = bot.clone
       bot.instance_eval do
         def x
