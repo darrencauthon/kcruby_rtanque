@@ -69,9 +69,7 @@ last = @other_bot_points.keys.last
 if @other_bot_points[first] && @other_bot_points[last]
 end
 puts '---'
-      current_bots = sensors.radar.sort_by { |x| x.distance }
-      return current_bots if current_bots.count > 0
-      []
+      return sensors.radar.sort_by { |x| x.distance }
     end
 
     def setup_default_values
