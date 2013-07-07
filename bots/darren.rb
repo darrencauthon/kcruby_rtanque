@@ -72,7 +72,7 @@ class Darren < RTanque::Bot::Brain
           diff_in_x = (next_to_last_point[:x] - last_point[:x])
           diff_in_y = (next_to_last_point[:y] - last_point[:y])
           speed = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
-          puts speed
+          raise bot.inspect
         end
       end
       puts '---'
