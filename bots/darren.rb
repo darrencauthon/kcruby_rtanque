@@ -62,13 +62,11 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
-      current_bots = sensors.radar.sort_by { |x| x.distance }.map { |x| create_internal_copy_of x }
-
-      current_bots.each do |bot|
+      sensors.radar.sort_by { |x| x.distance }.map do |x| 
+        bot = create_internal_copy_of x
         bot.speed = get_speed_of bot
+        bot
       end
-
-      return current_bots
     end
 
     def get_speed_of bot
