@@ -100,8 +100,8 @@ class Darren < RTanque::Bot::Brain
       bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
                                                         RTanque::Point.new(this_point[:x], this_point[:y]))
       (1..75).to_a.map do |tick|
-        x=(bot.x+(Math.sin(bot_heading)*bot.speed * tick)).round(10)
-        y=(bot.y+(Math.cos(bot_heading)*bot.speed * tick)).round(10)
+        x = (bot.x + (Math.sin(bot_heading) * bot.speed * tick)).round(10)
+        y = (bot.y + (Math.cos(bot_heading) * bot.speed * tick)).round(10)
         x = 0 if x <= 0
         x = arena.width if x >= arena.width
         y = 0 if y <= 0
@@ -111,11 +111,11 @@ class Darren < RTanque::Bot::Brain
     end
 
     def get_speed_of bot
-      last_point =         bot.previous_points[-1]
-      next_to_last_point = bot.previous_points[-2]
-      diff_in_x = (next_to_last_point[:x] - last_point[:x])
-      diff_in_y = (next_to_last_point[:y] - last_point[:y])
-      speed = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
+      this_point = bot.previous_points[-1]
+      last_point = bot.previous_points[-2]
+      diff_in_x  = last_point[:x] - this_point[:x]
+      diff_in_y  = last_point[:y] - this_point[:y]
+      speed      = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
     rescue
       0
     end
