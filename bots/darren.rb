@@ -62,7 +62,7 @@ class Darren < RTanque::Bot::Brain
     end
 
     def bots
-      current_bots = sensors.radar.sort_by { |x| x.distance }
+      current_bots = sensors.radar.sort_by { |x| x.distance }.map { |x| x.clone }
 
       puts '---'
       current_bots.each do |bot|
@@ -72,7 +72,17 @@ class Darren < RTanque::Bot::Brain
           diff_in_x = (next_to_last_point[:x] - last_point[:x])
           diff_in_y = (next_to_last_point[:y] - last_point[:y])
           speed = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
-          raise bot.inspect
+          bot.instance_eval do
+            def speed
+              @speed
+            end
+
+            def speed= value
+              @speed = value
+            end
+          end
+          bot.speed = speed
+          puts bot.speed
         end
       end
       puts '---'
