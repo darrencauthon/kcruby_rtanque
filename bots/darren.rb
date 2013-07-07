@@ -82,12 +82,15 @@ class Darren < RTanque::Bot::Brain
       shell_speed_factor = RTanque::Configuration.shell.speed_factor
       bot.next_points.each_with_index.map do |point, tick|
         heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+        #puts '---'
+        #puts [sensors.position, RTanque::Point.new(point[:x], point[:y])]
+        #puts '---'
         { fire_rate: 3, point: point, heading: heading }
       end
     end
 
     def calculate_next_points_for bot
-      (1..10).to_a.map do |tick|
+      (100..110).to_a.map do |tick|
         x=(bot.x+(Math.sin(bot.heading)*bot.speed * tick)).round(10)
         y=(bot.y+(Math.cos(bot.heading)*bot.speed * tick)).round(10)
         x = 0 if x <= 0
@@ -267,7 +270,7 @@ class Darren::ICantSeeAnybody < Darren::Strategy
     @degree += 3
     @degree = 0 if @degree > 360
     command.radar_heading  = RTanque::Heading.new_from_degrees @degree
-    command.turret_heading = command.radar_heading
+    #command.turret_heading = command.radar_heading
   end
 end
 
@@ -276,10 +279,24 @@ class Darren::ISeeSomethingToShoot < Darren::Strategy
     bot = bots.first
     command.heading        = bot.heading + 115
     command.radar_heading  = bot.heading
-    command.turret_heading = bot.heading
+    #command.turret_heading = bot.heading
   end
 
   def is_applicable?
     bots.count > 0
+  end
+end
+
+class Darren::TryToGuessWhereTheBotWillBe < Darren::Strategy
+  def apply
+    bot = bots.first
+    command.turret_heading = bot.firing_solutions.first[:heading]
+    command.fire_power = 3
+    #puts "GET IT! #{bot.firing_solutions.last.inspect}"
+  end
+
+  def is_applicable?
+    b = bots
+    b.count > 0 && b.first.firing_solutions.count > 0
   end
 end
