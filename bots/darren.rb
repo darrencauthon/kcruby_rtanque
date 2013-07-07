@@ -82,12 +82,12 @@ class Darren < RTanque::Bot::Brain
       shell_speed_factor = RTanque::Configuration.shell.speed_factor
       firing_solutions = []
       bot.next_points.each_with_index.map do |point, tick|
-        firing_rate = 3
-        expected_tick = bot.distance / (shell_speed_factor * firing_rate)
+        fire_power = 3
+        expected_tick = bot.distance / (shell_speed_factor * fire_power)
         expected_tick = expected_tick.round
         if tick == expected_tick
           heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
-          firing_solutions << { match: 0, fire_rate: 3, point: point, heading: heading }
+          firing_solutions << { match: 0, fire_power: 3, point: point, heading: heading }
         end
       end
       firing_solutions
@@ -302,7 +302,7 @@ class Darren::TryToGuessWhereTheBotWillBe < Darren::Strategy
     firing_solution = bot.firing_solutions.last
     point = firing_solution[:point]
     command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
-    command.fire firing_solution[:fire_rate]
+    command.fire firing_solution[:fire_power]
   end
 
   def is_applicable?
