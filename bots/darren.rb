@@ -10,10 +10,6 @@ class Darren < RTanque::Bot::Brain
 
   class Strategy
 
-    MIN_FIRE_POWER = 1
-    MAX_FIRE_POWER = 3
-    MAX_BOT_SPEED  = 100
-
     attr_reader :hit_a_wall
 
     def initialize bot
@@ -34,6 +30,11 @@ class Darren < RTanque::Bot::Brain
 
     def self.run_pre_turn_hooks_for bot
       bot.before_turn
+    end
+
+    class << self
+      attr_accessor :min_speed, :max_speed, 
+                    :min_power, :max_power
     end
 
     def before_turn
@@ -95,12 +96,12 @@ class Darren < RTanque::Bot::Brain
       shell_speed_factor = RTanque::Configuration.shell.speed_factor
       firing_solutions = []
       bot.next_points.each_with_index.map do |point, tick|
-        fire_power = 3
+        fire_power = Darren::Strategy.max_power
         expected_tick = bot.distance / (shell_speed_factor * fire_power)
         expected_tick = expected_tick.round
         if tick == expected_tick
           heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
-          firing_solutions << { match: 0, fire_power: 3, point: point, heading: heading }
+          firing_solutions << { match: 0, fire_power: Darren::Strategy.max_power, point: point, heading: heading }
         end
       end
       firing_solutions
@@ -249,6 +250,11 @@ class Darren < RTanque::Bot::Brain
   end
 
   def tick!
+    strategy = Darren::Strategy
+    strategy.min_power = 1
+    strategy.max_power = 3
+    strategy.min_speed = 1
+    strategy.max_speed = 3
     Darren::Strategy.execute self
   end
 end
@@ -261,7 +267,7 @@ class Darren::AlwaysFireSomething < Darren::Strategy
   end
 
   def apply
-    command.fire_power = MIN_FIRE_POWER
+    command.fire_power = Darren::Strategy.min_power
   end
 end
 
@@ -278,7 +284,7 @@ class Darren::SuddenReversalIfWallIsHit < Darren::Strategy
     if hit_a_wall
       @direction = (@direction != :forward) ? :forward : :backward 
     end
-    @direction == :forward ? MAX_BOT_SPEED : -1 * MAX_BOT_SPEED
+    @direction == :forward ? Darren::Strategy.max_speed : -1 * Darren::Strategy.max_speed
   end
 end
 
@@ -331,7 +337,7 @@ end
 class Darren::ShootBotsThatAreNotMoving < Darren::Strategy
   def apply
     command.turret_heading = bots_that_are_not_moving.first.heading
-    command.fire 3
+    command.fire Darren::Strategy.max_power
   end
 
   def is_applicable?
@@ -350,7 +356,7 @@ class Darren::MoveTowardsTheArenaCenterIfIGetCloseToTheWall < Darren::Strategy
 
   def apply
     command.heading = RTanque::Heading.new_between_points sensors.position, middle_of_the_field
-    command.speed   = 3
+    command.speed   = Darren::Strategy.max_speed
   end
 
   def arena
@@ -394,7 +400,7 @@ class Darren::RunToTheMiddleIfNotBotsCanBeSeen < Darren::Strategy
 
   def apply
     command.heading = RTanque::Heading.new_between_points sensors.position, middle_of_the_field
-    command.speed   = 3
+    command.speed   = Darren::Strategy.max_speed
   end
 
   def middle_of_the_field
