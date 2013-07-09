@@ -347,8 +347,12 @@ end
 
 class Darren::DriveInACircle < Darren::Strategy
   def apply
+    if @point && (@ticks + 100 <= sensors.ticks)
+      @point = nil
+    end
     if @point.nil?
       @point = sensors.position
+      @ticks = sensors.ticks
     end
     command.heading = heading_to @point
   end
