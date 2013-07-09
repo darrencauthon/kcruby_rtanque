@@ -326,6 +326,7 @@ class Darren::UseFiringSolutions < Darren::Strategy
     point = firing_solution[:point]
     command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
     command.fire firing_solution[:fire_power]
+    command.radar_heading = bot.heading
   end
 
   def is_applicable?
