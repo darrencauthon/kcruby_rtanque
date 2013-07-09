@@ -41,6 +41,7 @@ class Darren < RTanque::Bot::Brain
     end
 
     def is_applicable?
+      true
     end
 
     def apply
@@ -99,7 +100,7 @@ class Darren < RTanque::Bot::Brain
         expected_tick = bot.distance / (shell_speed_factor * fire_power)
         expected_tick = expected_tick.round
         if tick == expected_tick
-          heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+          heading = heading_to point
           firing_solutions << { match: 0, fire_power: 3, point: point, heading: heading }
         end
       end
@@ -110,8 +111,7 @@ class Darren < RTanque::Bot::Brain
       this_point = bot.previous_points[-1]
       last_point = bot.previous_points[-2]
       return [] unless this_point and last_point
-      bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
-                                                        RTanque::Point.new(this_point[:x], this_point[:y]))
+      bot_heading = heading_to this_point, last_point
       (1..75).to_a.map do |tick|
         guess_where_this_bot_will_be_in_so_many_ticks bot, bot_heading, tick
       end
@@ -135,6 +135,16 @@ class Darren < RTanque::Bot::Brain
       speed      = Math.sqrt((diff_in_x * diff_in_x) + (diff_in_y * diff_in_y)).round(10)
     rescue
       0
+    end
+
+    def heading_to to, from = sensors.position
+      to   = hash_to_point to if to.instance_of? Hash
+      from = hash_to_point to if from.instance_of? Hash
+      RTanque::Heading.new_between_points from, to
+    end
+
+    def hash_to_point point
+      RTanque::Point.new point[:x], point[:y]
     end
 
     def create_clone_with_extra_attributes_of bot
@@ -256,20 +266,12 @@ end
 # logic starts here
 
 class Darren::AlwaysFireSomething < Darren::Strategy
-  def is_applicable?
-    true
-  end
-
   def apply
     command.fire_power = MIN_FIRE_POWER
   end
 end
 
 class Darren::SuddenReversalIfWallIsHit < Darren::Strategy
-  def is_applicable?
-    true
-  end
-
   def apply
     command.speed = speed
   end
@@ -318,7 +320,7 @@ class Darren::UseFiringSolutions < Darren::Strategy
     bot = bots.first
     firing_solution = bot.firing_solutions.first
     point = firing_solution[:point]
-    command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+    command.turret_heading = heading_to point
     command.fire firing_solution[:fire_power]
   end
 
@@ -340,5 +342,49 @@ class Darren::ShootBotsThatAreNotMoving < Darren::Strategy
 
   def bots_that_are_not_moving
     bots.select { |x| x.speed == 0 }
+  end
+end
+
+class Darren::MoveTowardsTheArenaCenterIfIGetCloseToTheWall < Darren::Strategy
+  def is_applicable?
+    is_near_an_edge?
+  end
+
+  def apply
+    command.heading = heading_to middle_of_the_field
+    command.speed   = 3
+  end
+
+  def arena
+    sensors.position.arena
+  end
+
+  def middle_of_the_field
+    { x: sensors.position.arena.width  / 2, 
+      y: sensors.position.arena.height / 2 }
+  end
+
+  def x_limits
+    [ 
+      { from: 0,                 to: 250         },
+      { from: arena.width - 250, to: arena.width }
+    ]
+  end
+
+  def y_limits
+    [ 
+      { from: 0,                  to: 250          },
+      { from: arena.height - 250, to: arena.height }
+    ]
+  end
+
+  def is_near_an_edge?
+    count  = x_limits.select do |l|
+               sensors.position.x >= l[:from] && sensors.position.x <= l[:to]
+             end.count
+    count += y_limits.select do |l|
+              sensors.position.y >= l[:from] && sensors.position.y <= l[:to]
+            end.count
+    count > 0
   end
 end
