@@ -381,7 +381,7 @@ class Darren::MoveTowardsTheArenaCenterIfIGetCloseToTheWall < Darren::Strategy
                sensors.position.x >= l[:from] && sensors.position.x <= l[:to]
              end.count
     count += y_limits.select do |l|
-              sensors.position.y >= l[:from] && sensors.position.y <= l[:to]
+               sensors.position.y >= l[:from] && sensors.position.y <= l[:to]
             end.count
     count > 0
   end
