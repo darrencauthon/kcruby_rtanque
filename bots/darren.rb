@@ -386,3 +386,19 @@ class Darren::MoveTowardsTheArenaCenterIfIGetCloseToTheWall < Darren::Strategy
     count > 0
   end
 end
+
+class Darren::RunToTheMiddleIfNotBotsCanBeSeen < Darren::Strategy
+  def is_applicable?
+    bots.count == 0
+  end
+
+  def apply
+    command.heading = RTanque::Heading.new_between_points sensors.position, middle_of_the_field
+    command.speed   = 3
+  end
+
+  def middle_of_the_field
+    RTanque::Point.new(sensors.position.arena.width  / 2, 
+                       sensors.position.arena.height / 2)
+  end
+end
