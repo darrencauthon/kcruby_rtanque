@@ -370,15 +370,15 @@ class Darren::MoveTowardsTheArenaCenterIfIGetCloseToTheWall < Darren::Strategy
 
   def x_limits
     [ 
-      { from: 0,                 to: 250         },
-      { from: arena.width - 250, to: arena.width }
+      { from: 0,                 to: 150         },
+      { from: arena.width - 150, to: arena.width }
     ]
   end
 
   def y_limits
     [ 
-      { from: 0,                  to: 250          },
-      { from: arena.height - 250, to: arena.height }
+      { from: 0,                  to: 150          },
+      { from: arena.height - 150, to: arena.height }
     ]
   end
 
