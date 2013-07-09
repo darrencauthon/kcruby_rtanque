@@ -138,6 +138,16 @@ class Darren < RTanque::Bot::Brain
       0
     end
 
+    def heading_to to, from = sensors.position
+      #from = hash_to_point last_point if from.is_a? Hash
+      #to   = hash_to_point this_point if to.is_a? Hash
+      RTanque::Heading.new_between_points from, to
+    end
+
+    def hash_to_point point
+      RTanque::Point.new point[:x], point[:y]
+    end
+
     def create_clone_with_extra_attributes_of bot
       bot = bot.clone
       bot.instance_eval do
@@ -311,7 +321,8 @@ class Darren::UseFiringSolutions < Darren::Strategy
     bot = bots.first
     firing_solution = bot.firing_solutions.first
     point = firing_solution[:point]
-    command.turret_heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+    #command.turret_heading = RTanque::Heading.new_between_points(sensors.position, )
+    command.turret_heading = heading_to RTanque::Point.new(point[:x], point[:y])
     command.fire firing_solution[:fire_power]
   end
 
