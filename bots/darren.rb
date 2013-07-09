@@ -138,8 +138,6 @@ class Darren < RTanque::Bot::Brain
     end
 
     def heading_to to, from = sensors.position
-      #from = hash_to_point last_point if from.is_a? Hash
-      #to   = hash_to_point this_point if to.is_a? Hash
       to   = hash_to_point to if to.instance_of? Hash
       from = hash_to_point to if from.instance_of? Hash
       RTanque::Heading.new_between_points from, to
