@@ -100,7 +100,7 @@ class Darren < RTanque::Bot::Brain
         expected_tick = bot.distance / (shell_speed_factor * fire_power)
         expected_tick = expected_tick.round
         if tick == expected_tick
-          heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(point[:x], point[:y]))
+          heading = heading_to point
           firing_solutions << { match: 0, fire_power: 3, point: point, heading: heading }
         end
       end
@@ -111,8 +111,7 @@ class Darren < RTanque::Bot::Brain
       this_point = bot.previous_points[-1]
       last_point = bot.previous_points[-2]
       return [] unless this_point and last_point
-      bot_heading = RTanque::Heading.new_between_points(RTanque::Point.new(last_point[:x], last_point[:y]),
-                                                        RTanque::Point.new(this_point[:x], this_point[:y]))
+      bot_heading = heading_to this_point, last_point
       (1..75).to_a.map do |tick|
         guess_where_this_bot_will_be_in_so_many_ticks bot, bot_heading, tick
       end
@@ -141,6 +140,8 @@ class Darren < RTanque::Bot::Brain
     def heading_to to, from = sensors.position
       #from = hash_to_point last_point if from.is_a? Hash
       #to   = hash_to_point this_point if to.is_a? Hash
+      to   = hash_to_point to if to.instance_of? Hash
+      from = hash_to_point to if from.instance_of? Hash
       RTanque::Heading.new_between_points from, to
     end
 
@@ -321,8 +322,7 @@ class Darren::UseFiringSolutions < Darren::Strategy
     bot = bots.first
     firing_solution = bot.firing_solutions.first
     point = firing_solution[:point]
-    #command.turret_heading = RTanque::Heading.new_between_points(sensors.position, )
-    command.turret_heading = heading_to RTanque::Point.new(point[:x], point[:y])
+    command.turret_heading = heading_to point
     command.fire firing_solution[:fire_power]
   end
 
@@ -352,6 +352,6 @@ class Darren::DriveInACircle < Darren::Strategy
     if @point.nil?
       @point = sensors.position
     end
-    command.heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(@point[:x], @point[:y]))
+    command.heading = heading_to @point
   end
 end
