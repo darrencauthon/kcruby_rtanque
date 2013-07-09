@@ -288,16 +288,12 @@ class Darren::SuddenReversalIfWallIsHit < Darren::Strategy
   end
 end
 
-class Darren::ICantSeeAnybody < Darren::Strategy
+class Darren::SpinTheRadarInACircleIfICannotFindAnybody < Darren::Strategy
   def is_applicable?
     bots.count == 0
   end
 
   def apply
-    spin_the_radar_in_a_circle
-  end
-
-  def spin_the_radar_in_a_circle
     @degree ||= 0
     @degree += 3
     @degree = 0 if @degree > 360
