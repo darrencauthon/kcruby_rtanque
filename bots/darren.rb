@@ -342,3 +342,47 @@ class Darren::ShootBotsThatAreNotMoving < Darren::Strategy
     bots.select { |x| x.speed == 0 }
   end
 end
+
+class Darren::MoveTowardsTheArenaCenterIfIGetCloseToTheWall < Darren::Strategy
+  def is_applicable?
+    is_near_an_edge?
+  end
+
+  def apply
+    command.heading = RTanque::Heading.new_between_points sensors.position, middle_of_the_field
+    command.speed   = 3
+  end
+
+  def arena
+    sensors.position.arena
+  end
+
+  def middle_of_the_field
+    RTanque::Point.new(sensors.position.arena.width  / 2, 
+                       sensors.position.arena.height / 2)
+  end
+
+  def x_limits
+    [ 
+      { from: 0,                 to: 250         },
+      { from: arena.width - 250, to: arena.width }
+    ]
+  end
+
+  def y_limits
+    [ 
+      { from: 0,                  to: 250          },
+      { from: arena.height - 250, to: arena.height }
+    ]
+  end
+
+  def is_near_an_edge?
+    count  = x_limits.select do |l|
+               sensors.position.x >= l[:from] && sensors.position.x <= l[:to]
+             end.count
+    count += y_limits.select do |l|
+              sensors.position.y >= l[:from] && sensors.position.y <= l[:to]
+            end.count
+    count > 0
+  end
+end
