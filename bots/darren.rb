@@ -335,3 +335,12 @@ class Darren::ShootBotsThatAreNotMoving < Darren::Strategy
     bots.select { |x| x.speed == 0 }
   end
 end
+
+class Darren::DriveInACircle < Darren::Strategy
+  def apply
+    if @point.nil?
+      @point = sensors.position
+    end
+    command.heading = RTanque::Heading.new_between_points(sensors.position, RTanque::Point.new(@point[:x], @point[:y]))
+  end
+end
