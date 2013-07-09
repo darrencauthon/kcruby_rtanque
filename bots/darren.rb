@@ -41,6 +41,7 @@ class Darren < RTanque::Bot::Brain
     end
 
     def is_applicable?
+      true
     end
 
     def apply
@@ -256,20 +257,12 @@ end
 # logic starts here
 
 class Darren::AlwaysFireSomething < Darren::Strategy
-  def is_applicable?
-    true
-  end
-
   def apply
     command.fire_power = MIN_FIRE_POWER
   end
 end
 
 class Darren::SuddenReversalIfWallIsHit < Darren::Strategy
-  def is_applicable?
-    true
-  end
-
   def apply
     command.speed = speed
   end
